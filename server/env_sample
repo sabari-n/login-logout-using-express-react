@@ -1,0 +1,23 @@
+# environment
+NODE_ENV="production"
+
+# port
+PORT=8111
+
+# api
+API_PATH=api
+API_VERSION=1
+
+# postgres
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="your_password"
+POSTGRES_HOST="localhost"
+POSTGRES_PORT=5432
+POSTGRES_DB="DB_NAME"
+
+
+# jwt options
+JWT_KEY="JWT_KEY Can be any numberic string" #example foaifoawief75efawef
+JWT_REFRESH_KEY="JWT_KEY Can be any numberic string"
+JWT_EXPIRES_IN=24h
+JWT_EXPIRES_HOUR=24
