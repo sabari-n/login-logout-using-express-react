@@ -3,13 +3,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const listRoutes = require('express-list-endpoints');
-
+const cors = require('cors')
 const configHelper = require('./src/shared/helpers/config.helper');
 const db = require('./src/knex'); //db
 db.checkDbConnection();//check db
 
 var app = express();
 app.use(logger('dev'));
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
