@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Button, TextField, Grid,Link } from '@mui/material';
+import { Button, TextField, Grid,Link, Alert } from '@mui/material';
 import loginImage from '../../images/login.svg'
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import { userActions } from '../../redux-config/actions/user.actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { authActions } from '../../store';
 
 const validationSchema = yup.object({
     email: yup
@@ -20,9 +20,16 @@ const validationSchema = yup.object({
 
 export const Login = () => {
     let navigate = useNavigate();
-    const loggingIn = useSelector(state => state.authentication.loggingIn);
-    console.log('loggingIn',loggingIn)
     const dispatch = useDispatch();
+    const authUser = useSelector(x => x.auth.user);
+    const authError = useSelector(x => x.auth.error);
+    console.log('authUser',authUser)
+    useEffect(() => {
+        // redirect to home if already logged in
+        if (authUser)  navigate("/", { replace: true });
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -30,7 +37,7 @@ export const Login = () => {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            dispatch(userActions.login(values.email, values.password))
+            dispatch(authActions.login({ email:values.email, password:values.password }))
             .then(
               user => {
                 console.log('email', user)
@@ -102,7 +109,9 @@ export const Login = () => {
             <Button color="primary" variant="contained" onClick={formik.handleSubmit}>
                 Login
             </Button>
-            
+            {authError &&
+            <Alert severity="error">{authError.message}</Alert>
+            }
             <Link
                 sx={{marginTop:"15px"}}
                 component="button"
