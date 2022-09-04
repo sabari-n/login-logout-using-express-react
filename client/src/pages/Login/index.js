@@ -23,7 +23,6 @@ export const Login = () => {
     const dispatch = useDispatch();
     const authUser = useSelector(x => x.auth.user);
     const authError = useSelector(x => x.auth.error);
-    console.log('authUser',authUser)
     useEffect(() => {
         // redirect to home if already logged in
         if (authUser)  navigate("/", { replace: true });
@@ -37,7 +36,7 @@ export const Login = () => {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            dispatch(authActions.login({ email:values.email, password:values.password }))
+            dispatch(authActions.loginOrRegister({ email:values.email, password:values.password, param:"users/login"}))
             .then(
               user => {
                 console.log('email', user)

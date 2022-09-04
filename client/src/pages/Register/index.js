@@ -1,9 +1,11 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Button, TextField, Grid,Link } from '@mui/material';
+import { Button, TextField, Grid,Link, Alert } from '@mui/material';
 import loginImage from '../../images/login.svg'
 import { useNavigate } from "react-router-dom";
+import { authActions } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
 
 const validationSchema = yup.object({
     username: yup
@@ -20,8 +22,9 @@ const validationSchema = yup.object({
 });
 
 export const Register = () => {
-    let navigate = useNavigate();
-
+    const navigate = useNavigate();
+    const dispatch =useDispatch()
+    const regError = useSelector(x => x.auth.error);
     const formik = useFormik({
         initialValues: {
             username:'',
@@ -29,10 +32,16 @@ export const Register = () => {
             password: '',
         },
         validationSchema: validationSchema,
-        onSubmit: (values) => {
-
-            alert(JSON.stringify(values, null, 2));
-
+        onSubmit: (e,values) => {
+            e.preventDefault(); 
+            dispatch(authActions.loginOrRegister({ username:values.username,email:values.email, password:values.password,param:"users" }))
+            .then(
+              user => {
+                console.log('email', user)
+             
+                navigate("/", { replace: true });
+              },
+            );
         },
     });
 
@@ -96,7 +105,9 @@ export const Register = () => {
             <Button color="primary" variant="contained" onClick={formik.handleSubmit}>
                 Register
             </Button>
-
+            {regError &&
+            <Alert severity="error">{regError.message}</Alert>
+            }
             <Link
                 sx={{marginTop:"15px"}}
                 component="button"

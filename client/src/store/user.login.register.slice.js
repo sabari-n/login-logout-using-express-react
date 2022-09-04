@@ -18,13 +18,15 @@ export const authReducer = slice.reducer;
 
 // implementation
 
+
 function createInitialState() {
     return {
         // initialize state from local storage to enable user to stay logged in
-        user: JSON.parse(localStorage.getItem('user')),
+        user: localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')):null,
         error: null
     }
 }
+
 
 function createReducers() {
     return {
@@ -39,29 +41,28 @@ function createReducers() {
 
 function createExtraActions() {
     return {
-        login: login()
+        loginOrRegister: loginOrRegister(),
     };    
 
-    function login() {
+    function loginOrRegister(param) {
         return createAsyncThunk(
-            `${name}/login`,
+            `${name}/login-register`,
         
-            async ({ email, password }) => await axios.post(configData.API_URL + "users/login", {email,password })
+            async (data) => {
+                let param = data.param
+                delete data.param
+                return await axios.post(configData.API_URL + param, data)
+            }
         );
     }
 }
 
 function createExtraReducers() {
     return {
-        ...login()
+        ...loginOrRegister(),
     };
-
-    function login() {
-        var { pending, fulfilled, rejected } = extraActions.login;
-        console.log('pending',pending)
-        console.log('fulfilled',fulfilled)
-        console.log('rejected',rejected)
-
+    function loginOrRegister() {
+        var { pending, fulfilled, rejected } = extraActions.loginOrRegister;
         return {
             [pending]: (state) => {
                 state.error = null;
@@ -80,6 +81,8 @@ function createExtraReducers() {
             [rejected]: (state, action) => {
                 state.error = action.error;
             }
-        };
+        }    
     }
+
+
 }
